@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Success Hunter — Level Up Your Day</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="fxCanvas"></canvas>
+<div class="gg"><div class="msg" id="ggMsg">Great job Elshad! Enjoy! 🎉</div></div>
+
+<div class="wrap">
+  <div class="grid g-2">
+    <div>
+      <h1 id="appTitle">Success Hunter <span class="small" id="tagline">— turn your day into levels, XP, and rewards</span></h1>
+      <div class="kpi">
+        <div class="tile">
+          <div class="small" data-i18n="level">Level</div>
+          <div class="big" id="level">1</div>
+          <div class="small"><span data-i18n="nextLevel">Next level in</span> <span id="toNext">100</span> XP</div>
+        </div>
+        <div class="tile">
+          <div class="small" data-i18n="totalXP">Total XP</div>
+          <div class="big" id="totalXP">0</div>
+          <div class="small">Coins <span class="badge" title="Earn coins from tasks and spend in the Reward Shop">🪙</span> <span id="coins">0</span></div>
+        </div>
+        <div class="tile">
+          <div class="small" data-i18n="today">Today</div>
+          <div class="big"><span id="todayXP">0</span> / <span id="dailyGoal">75</span> XP</div>
+          <div class="progress"><span id="progressBar"></span></div>
+          <div class="small"><span data-i18n="streak">Streak</span> <span id="streak">0</span> 🔥</div>
+        </div>
+        <div class="tile">
+          <div class="small" data-i18n="thisWeek">This Week</div>
+          <div class="big" id="weekXP">0</div>
+          <div class="small" data-i18n="monSun">Mon–Sun total</div>
+        </div>
+        <div class="tile">
+          <div class="small" data-i18n="thisMonth">This Month</div>
+          <div class="big" id="monthXP">0</div>
+          <div class="small" data-i18n="calendarMonth">Calendar month total</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="quickSettings">Quick Settings</h2>
+      <div class="grid g-2">
+        <div>
+          <label data-i18n="playerName">Player name</label>
+          <input id="playerName" placeholder="Your name">
+        </div>
+        <div>
+          <label data-i18n="language">Language</label>
+          <select id="langSelect">
+            <option value="en">🇬🇧 English</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="ru">🇷🇺 Русский</option>
+            <option value="az">🇦🇿 Azərbaycan</option>
+          </select>
+        </div>
+        <div>
+          <label data-i18n="dailyTarget">Daily XP Target</label>
+          <input id="goalInput" type="number" min="10" step="5" value="75">
+        </div>
+        <div>
+          <label data-i18n="coinRate">Coins per XP (reward economy)</label>
+          <input id="coinRate" type="number" min="0" step="0.1" value="0.2">
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="row">
+        <button class="btn secondary" id="resetToday" data-i18n="resetToday">Reset Today</button>
+        <button class="btn warn" id="newDay" data-i18n="newDay">⏭ New Day</button>
+        <button class="btn danger" id="hardReset" data-i18n="hardReset">Hard Reset</button>
+        <div class="right small notice" id="saveNote">Saves locally. <button class="btn secondary" id="exportBtn" data-i18n="export">Export</button> <label class="btn secondary" for="importFile" id="importLbl">Import</label><input id="importFile" type="file" accept="application/json" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="grid g-2">
+    <div class="card">
+      <h2 data-i18n="quests">Quests</h2>
+      <div class="small" id="questHelp">Add/edit/remove quests. Categories are customizable below.</div>
+      <div class="spacer"></div>
+      <table id="taskTable">
+        <thead><tr><th data-i18n="quest">Quest</th><th data-i18n="category">Category</th><th>XP</th><th></th></tr></thead>
+        <tbody id="taskBody"></tbody>
+      </table>
+      <div class="spacer"></div>
+      <h3 data-i18n="addEditQuest">Add / Edit Quest</h3>
+      <div class="grid g-2">
+        <div>
+          <label data-i18n="title">Title</label>
+          <input id="tTitle" placeholder="e.g., Client Outreach: 10 emails">
+        </div>
+        <div>
+          <label data-i18n="category">Category</label>
+          <select id="tCat"></select>
+        </div>
+        <div>
+          <label data-i18n="xpReward">XP Reward</label>
+          <input id="tXP" type="number" min="1" value="10">
+        </div>
+        <div class="row" style="align-items:end">
+          <button class="btn" id="addTask" data-i18n="saveQuest">Save Quest</button>
+          <button class="btn secondary" id="clearForm" data-i18n="clear">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="rewardShop">Reward Shop</h2>
+      <div class="small" id="shopHelp">Spend coins you’ve earned to unlock treats.</div>
+      <div id="shopList"></div>
+      <div class="spacer"></div>
+      <h3 data-i18n="addReward">Add Reward</h3>
+      <div class="grid g-2">
+        <div>
+          <label data-i18n="reward">Reward</label>
+          <input id="rTitle" placeholder="e.g., 1 hour CS2">
+        </div>
+        <div>
+          <label data-i18n="cost">Cost (coins)</label>
+          <input id="rCost" type="number" min="1" value="50">
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn good" id="addRewardBtn" data-i18n="add">Add</button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="grid g-2">
+    <div class="card">
+      <h2 data-i18n="categories">Categories</h2>
+      <div class="small" id="catHelp">Create your own categories. The first is the default.</div>
+      <div id="catChips"></div>
+      <div class="spacer"></div>
+      <div class="row">
+        <input id="catInput" placeholder="New category name">
+        <button class="btn" id="addCat" data-i18n="addCategory" onclick=addCategory()>Add Category</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="historyCalendar">History & Calendar</h2>
+      <div class="row cal-nav">
+        <button class="btn secondary" id="prevMonth">◀ <span data-i18n="prev">Prev</span></button>
+        <div class="small" id="calLabel"></div>
+        <button class="btn secondary" id="nextMonth"><span data-i18n="next">Next</span> ▶</button>
+      </div>
+      <div class="cal-head">
+        <div class="day-name" data-i18n="mon">Mon</div>
+        <div class="day-name" data-i18n="tue">Tue</div>
+        <div class="day-name" data-i18n="wed">Wed</div>
+        <div class="day-name" data-i18n="thu">Thu</div>
+        <div class="day-name" data-i18n="fri">Fri</div>
+        <div class="day-name" data-i18n="sat">Sat</div>
+        <div class="day-name" data-i18n="sun">Sun</div>
+      </div>
+      <div class="calendar" id="calendar"></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="card">
+    <h2 data-i18n="activityLog">Activity Log</h2>
+    <div id="log" class="small"></div>
+    <div class="footer" id="tipText">Tip: Start with a “boss fight” — finish the hardest quest first for momentum.</div>
+  </div>
+</div>
+
+<div class="overlay" id="dayOverlay">
+  <div class="modal">
+    <div class="row">
+      <h3 id="dayTitle">Day Details</h3>
+      <button class="btn closeX" id="closeOverlay" data-i18n="close">Close</button>
+    </div>
+    <div class="small" id="daySummary"></div>
+    <div class="spacer"></div>
+    <table>
+      <thead><tr><th data-i18n="time">Time</th><th data-i18n="quest">Quest</th><th data-i18n="category">Category</th><th>XP</th></tr></thead>
+      <tbody id="dayBody"></tbody>
+    </table>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
