@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  frontend-service:
+    image: "elshad/frontend:latest"
+    ports:
+      - "8099:80"
